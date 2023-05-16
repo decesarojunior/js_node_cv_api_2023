@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Estudo de caso - Clinica Veterinária</title>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.8/vue.js"></script>      
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.2/axios.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    </head> 
+    <body> 
+       
+        <div class="container-fluid">
+            <h3>Projeto Node+Pg+Express+Axios+Vue</h3>        
+
+             <div class="col-xs-2">
+               <ul class="nav nav-pills nav-stacked">
+                 <li class="active"><a data-toggle="pill" href="#home">Autenticação</a></li>
+                 <li><a data-toggle="pill" href="#menuRaca">Raça</a></li>
+                 <li><a data-toggle="pill" href="#menuEspecie">Espécie</a></li>
+                 <li><a data-toggle="pill" href="#menuProduto">Produto</a></li>
+                 <li><a data-toggle="pill" href="#menuSair">Sair</a></li>
+               </ul>
+             </div>
+             <div class="col-xs-6">
+               <div class="tab-content" id="app">
+
+                <div id="menuRaca" class="tab-pane fade">
+                    <h2>CRUD de Raças</h2>   
+
+                    <table id="tblListagemRaca" class="table table-striped" >
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Nome</th>  
+                            <th scope="col">Espécie</th>
+                            <th scope="col">Editar</th>
+                            <th scope="col">Remover</th>
+                        </tr>                     
+                        <tbody>
+                            <tr v-for="(r, indice) in racas">                                                
+                                    <td>{{r.id}}</td>
+                                    <td>{{r.nome}}</td>
+                                    <td>{{r.especie.nome}}</td>
+                                    <td><button v-on:click="" class="btn" type="button">Editar</button></td>
+                                    <td><button v-on:click="" class="btn" type="button">Remover</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div id="formularioRaca">     
+                        <h3>Formulário para cadastrar e alterar Raça</h3>                   
+                        <div>
+                          <div class="form-group">
+                            <label for="inputId">ID:</label>
+                            <input type="text" class="form-control" id="inputId" disabled>
+                          </div>
+                          <div class="form-group">
+                              <label for="inputNome">Nome:</label>
+                              <input type="text" class="form-control" id="inputNome">
+                          </div>     
+                          
+                          <div class="form-group">
+                            <label for="inputNome">Espécie:</label>
+                            <select id="selectectEspecie">
+                                <option id="1" value="Felino">
+                            </select>
+                          </div>  
+                          
+                          <button @click="" class="btn btn-primary" type="button">Salvar</button>
+                          <button @click="" class="btn btn-primary" type="button">Limpar</button>                         
+                        </div>                                                                            
+                    </div> 
+
+                 </div>
+
+                <div id="menuEspecie" class="tab-pane fade">
+                    <h2>CRUD de Espécies</h2>   
+
+                    <table class="table table-striped" >
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Alterar</th>
+                            <th scope="col">Remover</th>
+                        </tr>                     
+                        <tbody>
+                            <tr v-for="(e, indice) in especies">                                                
+                                    <td>{{e.id}}</td>
+                                    <td>{{e.nome}}</td>                               
+                                    <td><button v-on:click="" class="btn" type="button">Alterar</button></td>
+                                    <td><button v-on:click="" class="btn" type="button">Remover</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <form id="formularioEspecie">     
+                        <h3>Formulário para cadastrar e alterar Espécie</h3>                   
+                        <div>
+                         
+                            <!-- Completar -->                  
+                          
+                          <button @click="" class="btn btn-primary" type="button">Salvar</button>
+                          <button @click="" class="btn btn-primary" type="button">Limpar</button>                         
+                        </div>                                                                            
+                    </form> 
+                 </div>
+
+
+
+                 <div id="menuProduto" class="tab-pane fade">
+                    <h2>CRUD de Produtos</h2>   
+
+                    <table class="table table-striped" >
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Alterar</th>
+                            <th scope="col">Remover</th>
+                        </tr>                     
+                        <tbody>
+                            <tr v-for="(p, indice) in produtos">                                                
+                                    <td>{{p.id}}</td>
+                                    <td>{{p.nome}}</td>      
+                                    <td>{{p.valor}}</td>
+                                    <td>{{p.quantidade}}</td>      
+                                    <td>{{p.tipo}}</td>
+                                    <td>{{p.fornecedor.nome}}</td>
+                                    <td><button v-on:click="" class="btn" type="button">Alterar</button></td>
+                                    <td><button v-on:click="" class="btn" type="button">Remover</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <form id="formularioProduto">     
+                        <h3>Formulário para cadastrar e alterar Prooduto</h3>                   
+                        <div>
+                         
+                            <!-- Completar -->                  
+                          
+                          <button @click="" class="btn btn-primary" type="button">Salvar</button>
+                          <button @click="" class="btn btn-primary" type="button">Limpar</button>                         
+                        </div>                                                                            
+                    </form> 
+                 </div>
+
+
+                 <div id="home" class="tab-pane fade in active">
+                    <h3>Autenticacação</h3>
+                         <div class="form-outline mb-4">
+                             <label class="form-label" for="inputANickname">CPF:</label>
+                             <input type="text"  class="form-control" id="inputANickname">
+                          </div>
+                         
+                         <div class="form-outline mb-4">
+                             <label class="form-label"for="inputASenha">Senha:</label>
+                             <input type="password"  class="form-control" id="inputASenha">
+                         </div>
+                         
+                         <button @click="" class="btn btn-primary btn-block mb-4" type="button">Autenticar</button>
+                                                   
+                 </div>
+                 <div id="menuSair" class="tab-pane fade" >
+ 
+                     <button @click="" class="btn btn-primary" type="button">Sair</button>
+                 </div>
+
+               </div>
+             </div>
+           </div>
+         </div>
+
+    </body>
+    <script type="text/javascript">
+
+    $(document).ready(function() {
+
+      var especies = [];
+
+      var racas = [];
+
+      var produtos = [];
+
+      var dados = {"especies": especies,
+                   "racas"  : racas,
+                   "produtos": produtos};
+
+      Vue.filter('formataData', function (value) {                
+                //yyyy-mm-dd
+                var data = new Date(value);
+                data.setDate(data.getDate()+1); //incrementa a data em um dia para mostrar corretamente (pode nao ser necessário)              
+                dia  = (data.getDate()).toString().padStart(2, '0'),
+                mes  = (data.getMonth()+1).toString().padStart(2, '0'), //+1 pois no getMonth Janeiro começa com zero.                
+                ano  = data.getFullYear();                
+                return dia+"/"+mes+"/"+ano;                
+        })  
+        
+      Vue.prototype.$http = axios;
+
+      new Vue({ 
+                el: '#app', 
+                data: dados,
+                methods: { 
+                    
+                },
+                created: function(){
+              
+                
+                }
+          }); 
+
+    });
+
+
+
+    </script>
+</html>
