@@ -1,0 +1,30 @@
+{
+  "name": "js_node_cv_api",
+  "version": "1.0.0",
+  "description": "projeto da disciplina de programacao III para o estudo de caso da clinica veterinaria.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/decesarojunior/js_node_cv_api_2023.git"
+  },
+  "keywords": [
+    "api",
+    "node",
+    "javascript",
+    "express",
+    "pg"
+  ],
+  "author": "Telmo Junior",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/decesarojunior/node_cv_api_203/issues"
+  },
+  "homepage": "https://github.com/decesarojunior/node_cv_api_203#readme",
+  "dependencies": {
+    "express": "^4.17.3",
+    "pg": "^8.7.3"
+  }
+}
