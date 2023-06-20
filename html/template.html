@@ -89,8 +89,8 @@
                             <tr v-for="(e, indice) in especies">                                                
                                     <td>{{e.id}}</td>
                                     <td>{{e.nome}}</td>                               
-                                    <td><button v-on:click="" class="btn" type="button">Alterar</button></td>
-                                    <td><button v-on:click="" class="btn" type="button">Remover</button></td>
+                                    <td><button v-on:click="editEspecie(indice)" class="btn" type="button">Alterar</button></td>
+                                    <td><button v-on:click="remEspecie(indice, e.id)" class="btn" type="button">Remover</button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -99,10 +99,20 @@
                         <h3>Formulário para cadastrar e alterar Espécie</h3>                   
                         <div>
                          
-                            <!-- Completar -->                  
+                            <!-- Completar -->       
+                            
+                            <div class="form-group">
+                                <label for="inputId">ID:</label>
+                                <input type="text" v-model="form_especie.id" class="form-control" id="inputIdEspecie" disabled>
+                            </div>
+                            <div class="form-group">
+                                  <label for="inputNome">Nome:</label>
+                                  <input type="text" v-model="form_especie.nome" class="form-control" id="inputNomeEspecie">
+                            </div>    
+
                           
-                          <button @click="" class="btn btn-primary" type="button">Salvar</button>
-                          <button @click="" class="btn btn-primary" type="button">Limpar</button>                         
+                          <button @click="salvarEspecie()" class="btn btn-primary" type="button">Salvar</button>
+                          <button @click="limparFormularioEspecie()" class="btn btn-primary" type="button">Limpar</button>                         
                         </div>                                                                            
                     </form> 
                  </div>
@@ -183,6 +193,10 @@
       var produtos = [];
 
       var dados = {"especies": especies,
+                    "form_especie" : {
+                                id: '',
+                                nome: ''                                 
+                  },
                    "racas"  : racas,
                    "produtos": produtos};
 
@@ -202,9 +216,109 @@
                 el: '#app', 
                 data: dados,
                 methods: { 
+
+                    limparFormularioEspecie: function () {
+                        this.form_especie.id = '';
+                        this.form_especie.nome = '';                        
+                    },
+
+                    editEspecie: function(param_index) {
+
+                        this.form_especie.id = this.especies[param_index].id;
+                        this.form_especie.nome = this.especies[param_index].nome;                        
+                    },
+
+                    salvarEspecie : function(){
+
+                        var especie = jQuery.extend({}, this.form_especie);//clona o this.novo_especie e armazena na variavel jogador. dessa forma alteracoes em this.novo_jogador nao irao refletir em jogador.
+                        if (especie.nome.length > 0) {
+                        
+                            if(isNaN(parseInt(especie.id))){
+                                //realiza um insert
+                                this.$http.post('http://localhost:4000/insertespecie', especie
+                                    )
+                                .then(response => { 	
+                                        
+                                        this.especies.push(response.data);										
+                                        alert('Inseriu a Especie id:'+response.data.id);
+                                    })
+                                .catch(error => {                                     
+                                    alert('Erro ao inserir Especie: '+error.response.data);
+                                });
+
+                            }else{
+                                //realiza um update
+                                this.$http.post('http://localhost:4000/updateespecie', especie
+                                    )
+                                .then(response => { 	
+                                        
+                                       // como atualizar o vetor this.especies ?????	
+
+                                       //Vue.set(this.especies, ????, response.data);//altera um elemento do vetor this.jogadores
+
+
+                                        alert('Alterou a Especie id:'+response.data.id);
+                                    })
+                                .catch(error => {                                     
+                                    alert('Erro ao alterar Especie: '+error.response.data);
+                                });
+
+                            }
+                            limparFormularioEspecie();
+
+                        }else{
+
+                            alert("Informe  o nome !!");
+                        }
+
+                    },    
+                    remEspecie: function(param_index, param_id){
+                            var decisao = confirm('Deseja realmente remover a Especie id:' + 
+                                                               param_id + ' ?');
+                            if(decisao){
+
+                                    this.$http.get('http://localhost:4000/deleteespecie/' + param_id)
+
+                                        .then(response => {
+
+                                            //documentacao sobre o splice
+                                            //https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
+                                            //remove 1 elemento do índice definido pela variavel param_index
+                                            this.especies.splice(param_index, 1);
+
+                                            alert('Removeu com sucesso a Especie id:' + response.data.id);
+
+                                            })
+                                        .catch(error => {
+                                                // error callback                                        
+                                                alert('Erro ao remover a Especie '+ param_id +': ' + error);
+                                                console.log(error);
+                                        });	
+
+                            }else{
+                                alert('Especie não removida !!!');
+                            }
+
+                    }
                     
                 },
                 created: function(){
+
+                    this.$http.get('http://localhost:4000/listespecie')                                        
+                        .then(response => {
+
+                            for(let e of response.data){
+
+                                this.especies.push({id: e.id, 
+                                                    nome:e.nome                                                   
+                                                   }
+                                                );
+                            }                        
+                        }).catch(response => {
+                            // error callback
+                           // alert('Não conectou no serviço: listjogador');
+                            console.log(response);
+                        });
               
                 
                 }

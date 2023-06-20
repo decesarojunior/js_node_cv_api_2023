@@ -29,6 +29,44 @@ sw.get('/', (req, res) => {
     res.send('Hello, world! meu primeiro teste.  #####');
 })
 
+sw.post('/insertespecie', function (req, res, next) {
+    
+    postgres.connect(function(err,client,done) {
+
+       if(err){
+
+           console.log("Nao conseguiu acessar o  BD "+ err);
+           res.status(400).send('{'+err+'}');
+       }else{            
+            
+            var q ={
+                text: 'insert into tb_especie (id, nome) values (nextval(\'seq_especie_id\'), $1) returning id, nome;',
+                values: [req.body.nome]
+            }
+            console.log(q);
+    
+            client.query(q,function(err,result) {
+                done(); // closing the connection;
+                if(err){
+                    console.log('retornou 400 pelo insertespecie');
+                    //console.log(err);
+                    //console.log(err.data);
+                    res.status(400).send('{'+err+'}');
+                }else{
+
+                    console.log('retornou 201 no insertespecie');
+                    //res.status(201).send(result.rows[0]);//se não realizar o send nao finaliza o client
+
+                    res.status(201).send({"id":  result.rows[0].id,
+                                          "nome": req.body.nome
+                                           })
+
+                }           
+            });
+       }       
+    });
+});
+
 sw.get('/listespecie', function (req, res) {
 
     //estabelece uma conexao com o bd.
@@ -51,6 +89,61 @@ sw.get('/listespecie', function (req, res) {
             });
        } 
     });
+});
+
+sw.get('/deleteespecie/:id', (req, res) => {
+
+    postgres.connect(function(err,client,done) {
+        if(err){
+            console.log("Não conseguiu acessar o banco de dados"+ err);
+            res.status(400).send('{'+err+'}');
+        }else{
+            
+            var q ={
+                text: 'delete FROM tb_especie where id = $1',
+                values: [req.params.id]
+            }
+    
+            client.query( q , function(err,result) {
+                done(); // closing the connection;
+                if(err){
+                    console.log(err);
+                    res.status(400).send('{'+err+'}');
+                }else{
+                    res.status(200).send({'id': req.params.id});//retorna o nickname deletado.
+                }
+
+            });
+        } 
+     });
+});
+
+sw.post('/updateespecie/', (req, res) => {
+
+    postgres.connect(function(err,client,done) {
+        if(err){
+            console.log("Não conseguiu acessar o BD: "+ err);
+            res.status(400).send('{'+err+'}');
+        }else{
+            var q ={
+                //update tb_modo set nome = '', quantboots = 0, quantrounds = 0 where codigo = 1;
+                text: 'update tb_especie set nome = $1 where id = $2 returning id, nome',
+                values: [req.body.nome, req.body.id]
+            }
+            console.log(q);     
+            client.query(q,function(err,result) {
+                done(); // closing the connection;
+                if(err){
+                    console.log("Erro no update Especie: "+err);
+                    res.status(400).send('{'+err+'}');
+                }else{             
+                    res.status(200).send({"id":  req.body.id,
+                    "nome": req.body.nome                 
+                     });//se não realizar o send nao finaliza o client nao finaliza
+                }
+            });
+        }
+     });
 });
 
 //iniciar o processo de escuta na porta 4000.
